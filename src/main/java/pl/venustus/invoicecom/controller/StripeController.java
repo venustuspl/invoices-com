@@ -1,9 +1,6 @@
 package pl.venustus.invoicecom.controller;
 
-import com.stripe.model.Invoice;
-import com.stripe.model.InvoiceCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import pl.venustus.invoicecom.service.StripeService;
 
@@ -15,12 +12,12 @@ public class StripeController {
     StripeService stripeService;
 
     @GetMapping(value = "/invoices")
-    public String getData(){
+    public String getData() {
         return stripeService.getInvoices();
     }
 
-    @PostMapping (value = "/invoices")
-    public String createInvoice(){
-        return stripeService.createInvoice();
+    @PostMapping(value = "/invoices")
+    public String createInvoice(@RequestParam String customer, @RequestParam String price) {
+        return stripeService.createInvoice(customer, price);
     }
 }

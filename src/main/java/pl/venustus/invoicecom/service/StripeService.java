@@ -1,14 +1,18 @@
 package pl.venustus.invoicecom.service;
 
 import com.stripe.Stripe;
-import com.stripe.model.*;
+import com.stripe.model.Invoice;
+import com.stripe.model.InvoiceCollection;
+import com.stripe.model.InvoiceItem;
 import com.stripe.param.InvoiceCreateParams;
-import com.stripe.param.InvoiceSendInvoiceParams;
+import com.stripe.param.InvoiceItemCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.venustus.invoicecom.config.StripeConfig;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service
 public class StripeService {
@@ -29,20 +33,24 @@ public class StripeService {
         }
     }
 
-    public String createInvoice() {
+    public String createInvoice(String customer, String price) {
         try {
             Stripe.apiKey = stripeConfig.getStripePrivateKey();
 
-            Map<String, Object> paramsItem = new HashMap<>();
-            paramsItem.put("customer", "cus_K3ebwjIxWGqyBN");
-            paramsItem.put(
-                    "price",
-                    "price_1JPANkKij36Zr1mM2P2fCDgg"
-            );
+            InvoiceItemCreateParams invoiceItemParams =
+                    InvoiceItemCreateParams.builder()
+                            .setCustomer(customer)
+                            .setPrice(price)
+                            .build();
+            InvoiceItem.create(invoiceItemParams);
 
-            Invoice invoice = Invoice.create(paramsItem);
+            InvoiceCreateParams invoiceParams =
+                    InvoiceCreateParams.builder()
+                            .setCustomer(customer)
+                            .setAutoAdvance(true) // auto-finalize this draft after ~1 hour
+                            .build();
 
-            return invoice.toString();
+            return Invoice.create(invoiceParams).toJson();
         } catch (Exception e) {
             throw new NoSuchElementException(e.getMessage());
         }

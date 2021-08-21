@@ -33,6 +33,19 @@ public class StripeService {
         }
     }
 
+    public String getInvoice(String invoiceId) {
+        try {
+            Stripe.apiKey = stripeConfig.getStripePrivateKey();
+
+            Invoice invoice =
+                    Invoice.retrieve(invoiceId);
+
+            return invoice.toString();
+        } catch (Exception e) {
+            throw new NoSuchElementException(e.getMessage());
+        }
+    }
+
     public String createInvoice(String customer, String price) {
         try {
             Stripe.apiKey = stripeConfig.getStripePrivateKey();

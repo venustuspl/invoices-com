@@ -12,8 +12,13 @@ public class StripeController {
     StripeService stripeService;
 
     @GetMapping(value = "/invoices")
-    public String getData() {
+    public String getInvoices() {
         return stripeService.getInvoices();
+    }
+
+    @GetMapping(value = "/invoice")
+    public String getInvoice(@RequestParam String id) {
+        return stripeService.getInvoice(id);
     }
 
     @PostMapping(value = "/invoices")

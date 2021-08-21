@@ -14,6 +14,7 @@ import pl.venustus.invoicecom.service.StripeService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +30,33 @@ class StripeControllerTest {
     @Before
     void setUp() {
         Mockito.reset(stripeService);
+    }
+
+    @Test
+    void shouldNotReturnInnvoiceWhenInvoiceIdWasNotGiven() throws Exception {
+        //given
+        String invoiceId = "in_id";
+
+        //when
+        when(stripeService.getInvoice(any())).thenReturn(String.valueOf(Invoice.class));
+
+        //then
+        mockMvc.perform(get("/v1/invoice"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnInnvoiceWhenInvoiceIdWasGiven() throws Exception {
+        //given
+        String invoiceId = "in_id";
+
+        //when
+        when(stripeService.getInvoice(any())).thenReturn(String.valueOf(Invoice.class));
+
+        //then
+        mockMvc.perform(get("/v1/invoice?{id}", invoiceId)
+                        .param("id", invoiceId))
+                .andExpect(status().isOk());
     }
 
     @Test

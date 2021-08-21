@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 @Service
 public class StripeService {
     @Autowired
-    StripeConfig stripeConfig;
+    private StripeConfig stripeConfig;
 
     public String getInvoices() {
         try {
